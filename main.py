@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import loopover, time
 boardstr = input("Board (space separated, newline terminated): ")
 board = loopover.Board(boardstr)

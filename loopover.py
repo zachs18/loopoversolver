@@ -5,6 +5,8 @@ from collections import Counter
 sleep_length = 0.01
 sleep = lambda: time.sleep(sleep_length)
 
+concurrent = True
+
 class Board:
 	def __init__(self, _s):
 		s=_s
@@ -27,6 +29,8 @@ class Board:
 		self.width = self.height = i
 		self.x, self.y = (0, 0)
 		self.typed = self.keys = ''
+	def __str__(self):
+		return "Board(" + str(self.board) + ")"
 	def move(self, x=None, y=None):
 		if x is not None:
 			w = self.width
@@ -34,12 +38,12 @@ class Board:
 			right_dist = (x%w - self.x%w) % w
 			if left_dist < right_dist:
 				for i in range(left_dist):
-#					xdotool.key('j')
+					concurrent and xdotool.key('j')
 					self.keys += 'j'
 					sleep()
 			else:
 				for i in range(right_dist):
-#					xdotool.key('l')
+					concurrent and xdotool.key('l')
 					self.keys += 'l'
 					sleep()
 			self.x = x % self.width
@@ -49,12 +53,12 @@ class Board:
 			down_dist = (y%h - self.y%h) % h
 			if up_dist < down_dist:
 				for i in range(up_dist):
-#					xdotool.key('i')
+					concurrent and xdotool.key('i')
 					self.keys += 'i'
 					sleep()
 			else:
 				for i in range(down_dist):
-#					xdotool.key('k')
+					concurrent and xdotool.key('k')
 					self.keys += 'k'
 					sleep()
 			self.y = y % self.width
@@ -70,13 +74,13 @@ class Board:
 			pass
 		elif dist < (-dist) % self.height:
 			for i in range(dist):
-#				xdotool.key("w")
+				concurrent and xdotool.key("w")
 				self.y = self.y-1 % self.height
 				self.keys += 'w'
 				sleep()
 		else:
 			for i in range(self.height - dist):
-#				xdotool.key("s")
+				concurrent and xdotool.key("s")
 				self.y = self.y+1 % self.height
 				self.keys += 's'
 				sleep()
@@ -90,13 +94,13 @@ class Board:
 			pass
 		elif dist < (-dist) % self.width:
 			for i in range(dist):
-#				xdotool.key("a")
+				concurrent and xdotool.key("a")
 				self.x = self.x-1 % self.width
 				self.keys += 'a'
 				sleep()
 		else:
 			for i in range(self.width - dist):
-#				xdotool.key("d")
+				concurrent and xdotool.key("d")
 				self.x = self.x+1 % self.width
 				self.keys += 'd'
 				sleep()
@@ -123,7 +127,7 @@ class Board:
 		for key in self.keys[::-1]:
 			#xdotool.key(opposite[key])
 			opposite[key]()
-		xdotool.type(self.keys)
+		concurrent or xdotool.type(self.keys)
 		self.typed += self.keys
 		self.keys = ""
 	def solved(self, width=None, height=None):
@@ -263,11 +267,10 @@ class Board:
 				self.swipe_left(-1, i-x)
 				swapkey()
 				self.swipe_left(-1, -i-1)
-		if not lastcol_up: # Parity issue
-			swapkey()
-			self.solve_parity()
+		if not lastcol_up:
+			self.swipe_up(-1, 1)
 	def solve_parity(self):
-		if not self.solved(self.width, self.height-2) or not self.solved(self.width-1, self.height):
+		if not self.solved(self.width, self.height-2) or not self.solved(self.width-1, self.height-1):
 			raise ValueError(self)
 		while not self.solved():
 			print("Parity issue")
@@ -282,6 +285,8 @@ class Board:
 		self.solve_box()
 		self.solve_lastcol()
 		self.solve_keyhole()
-		xdotool.type(self.keys)
+		if not self.solved() and not self.width % 2:
+			self.solve_parity()
+		concurrent or xdotool.type(self.keys)
 		self.typed += self.keys
 		self.keys = ""
