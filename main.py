@@ -1,6 +1,6 @@
-import looper, time
+import loopover, time
 boardstr = input("Board (space separated, newline terminated): ")
-board = looper.Board(boardstr)
+board = loopover.Board(boardstr)
 print("Please Alt-Tab to Loopover and select the top-left cell: ", end='')
 
 wait_time = 4

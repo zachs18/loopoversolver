@@ -1,5 +1,6 @@
 import xdotool
 import time
+from collections import Counter
 
 sleep_length = 0.01
 sleep = lambda: time.sleep(sleep_length)
@@ -13,10 +14,10 @@ class Board:
 				for i in range(25):
 					s = s.replace(chr(ord('a')+i), str(1+i)+' ')
 			else:
-				raise ValueError(s)
+				raise ValueError(s, Counter(s))
 		board = [int(i) for i in s.split()]
 		if set(board) != set(range(1,len(board)+1)):
-			raise ValueError(_s)
+			raise ValueError(_s, Counter(board))
 		i=0
 		while i*i < len(board):
 			i += 1
@@ -25,7 +26,7 @@ class Board:
 		self.board = [board[i*j:i*(j+1)] for j in range(i)]
 		self.width = self.height = i
 		self.x, self.y = (0, 0)
-		self.keys = ''
+		self.typed = self.keys = ''
 	def move(self, x=None, y=None):
 		if x is not None:
 			w = self.width
@@ -33,12 +34,12 @@ class Board:
 			right_dist = (x%w - self.x%w) % w
 			if left_dist < right_dist:
 				for i in range(left_dist):
-					xdotool.key('j')
+#					xdotool.key('j')
 					self.keys += 'j'
 					sleep()
 			else:
 				for i in range(right_dist):
-					xdotool.key('l')
+#					xdotool.key('l')
 					self.keys += 'l'
 					sleep()
 			self.x = x % self.width
@@ -48,12 +49,12 @@ class Board:
 			down_dist = (y%h - self.y%h) % h
 			if up_dist < down_dist:
 				for i in range(up_dist):
-					xdotool.key('i')
+#					xdotool.key('i')
 					self.keys += 'i'
 					sleep()
 			else:
 				for i in range(down_dist):
-					xdotool.key('k')
+#					xdotool.key('k')
 					self.keys += 'k'
 					sleep()
 			self.y = y % self.width
@@ -69,13 +70,13 @@ class Board:
 			pass
 		elif dist < (-dist) % self.height:
 			for i in range(dist):
-				xdotool.key("w")
+#				xdotool.key("w")
 				self.y = self.y-1 % self.height
 				self.keys += 'w'
 				sleep()
 		else:
 			for i in range(self.height - dist):
-				xdotool.key("s")
+#				xdotool.key("s")
 				self.y = self.y+1 % self.height
 				self.keys += 's'
 				sleep()
@@ -89,13 +90,13 @@ class Board:
 			pass
 		elif dist < (-dist) % self.width:
 			for i in range(dist):
-				xdotool.key("a")
+#				xdotool.key("a")
 				self.x = self.x-1 % self.width
 				self.keys += 'a'
 				sleep()
 		else:
 			for i in range(self.width - dist):
-				xdotool.key("d")
+#				xdotool.key("d")
 				self.x = self.x+1 % self.width
 				self.keys += 'd'
 				sleep()
@@ -122,6 +123,8 @@ class Board:
 		for key in self.keys[::-1]:
 			#xdotool.key(opposite[key])
 			opposite[key]()
+		xdotool.type(self.keys)
+		self.typed += self.keys
 		self.keys = ""
 	def solved(self, width=None, height=None):
 		for x in range(width or self.width):
@@ -279,3 +282,6 @@ class Board:
 		self.solve_box()
 		self.solve_lastcol()
 		self.solve_keyhole()
+		xdotool.type(self.keys)
+		self.typed += self.keys
+		self.keys = ""
