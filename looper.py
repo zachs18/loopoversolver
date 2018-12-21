@@ -1,7 +1,7 @@
 import xdotool
 import time
 
-sleep_length = 0.07
+sleep_length = 0.02
 sleep = lambda: time.sleep(sleep_length)
 
 class Board:
@@ -143,7 +143,7 @@ class Board:
 				#Actually moves it to (i, height-1), but the other iterations of the loop will get it to (i, height-1)
 				nx, ny = i, height-1
 				x, y = self.find(nx, ny)
-				print(nx, ny, 'is at', x, y)
+				#print(nx, ny, 'is at', x, y)
 				if y == ny:
 					self.swipe_left(y, x-width) # get it to first unused column
 					self.swipe_up(width, -1) # move down
@@ -154,7 +154,7 @@ class Board:
 					self.swipe_up(x, y-ny-1) # move to below current row
 					self.swipe_left(ny+1, x-width) # move to just below where it needs to be
 					self.swipe_up(width, 1) # move up
-					print('left', y, 1)
+					#print('left', y, 1)
 					self.swipe_left(ny, 1) # move in for the rest of the row
 				elif y > ny:
 					self.swipe_left(y, x-width) # move to below where it needs to be
@@ -166,28 +166,28 @@ class Board:
 				#Actually moves it to (width-1, height-1), but the other iterations of the loop will get it to (width-1, i)
 				nx, ny = width-1, i
 				x, y = self.find(nx, ny)
-				print(nx, ny, 'is at', x, y)
+				#print(nx, ny, 'is at', x, y)
 				if x == nx:
-					print('x == nx')
+					#print('x == nx')
 					self.swipe_up(x, y-height)
 					self.swipe_left(height, -1)
 					self.swipe_up(x, height-y)
 					self.swipe_left(height, 1)
 					self.swipe_up(nx, 1)
 				elif x < nx:
-					print('x < nx')
+					#print('x < nx')
 					self.swipe_left(y, x-nx-1)
 					self.swipe_up(nx+1, y-height)
 					self.swipe_left(height, 1)
 					self.swipe_up(nx, 1)
 				elif x > nx:
-					print('x > nx')
+					#print('x > nx')
 					self.swipe_up(x, y-height)
 					self.swipe_left(height, x-nx)
 					self.swipe_up(nx, 1)
 		elif width == height == 1:
 			x,y = self.find(1)
-			print('1 is at', x, y)
+			#print('1 is at', x, y)
 			self.swipe_up(x, y)
 			self.swipe_left(0, x)
 		xdotool.key("space") # for grouping, doesnt affect game
@@ -260,3 +260,10 @@ class Board:
 				self.swipe_left(-1, i-x)
 				swapkey()
 				self.swipe_left(-1, -i-1)
+		if not lastcol_up: # Parity issue
+			print("Parity issue")
+			self.solve()
+	def solve(self):
+		self.solve_box()
+		self.solve_lastcol()
+		self.solve_keyhole()
