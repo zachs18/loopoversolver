@@ -1,10 +1,7 @@
-import xdo
 import subprocess
 import time
 
 sleep_time = 0.06
-
-_xdo = xdo.xdo()
 
 def key(keystroke, window=None, clearmodifiers=False, delay=None):
 	cmdline = "xdotool key"
