@@ -123,7 +123,7 @@ class Board:
 			#xdotool.key(opposite[key])
 			opposite[key]()
 		self.keys = ""
-	def solved_box(self, width=None, height=None):
+	def solved(self, width=None, height=None):
 		for x in range(width or self.width):
 			for y in range(height or self.height):
 				if (x,y) != self.find(x, y):
@@ -134,7 +134,7 @@ class Board:
 			width, height = self.width-1, self.height-1
 		if self.width <= width or self.height <= height:
 			raise ValueError
-		if self.solved_box(width, height):
+		if self.solved(width, height):
 			return
 		if height > 1: # solve shorter box and solve remaining row
 #		if height >= width > 1: # solve shorter box and solve remaining row
@@ -193,7 +193,7 @@ class Board:
 		xdotool.key("space") # for grouping, doesnt affect game
 		sleep()
 	def solve_lastcol(self): # leaves keyhole
-		if not self.solved_box(self.width-1, self.height-1):
+		if not self.solved(self.width-1, self.height-1):
 			raise ValueError(self)
 		for i in range(self.height-2): # move needed to (width-1, i)
 			#Actually moves it to (width-1, height-1), but the other iterations of the loop will get it to (width-1, i)
@@ -212,9 +212,9 @@ class Board:
 				raise ValueError(self)
 		self.swipe_up(self.width-1, 1)
 	def solve_keyhole(self):
-		if not self.solved_box(self.width-1, self.height-1): # box
+		if not self.solved(self.width-1, self.height-1): # box
 			raise ValueError(self)
-		if not self.solved_box(self.width, self.height-2): # lastcol
+		if not self.solved(self.width, self.height-2): # lastcol
 			raise ValueError(self)
 		key = None # self.board[-2][-1]
 		keyloc = (None, None)
@@ -261,8 +261,20 @@ class Board:
 				swapkey()
 				self.swipe_left(-1, -i-1)
 		if not lastcol_up: # Parity issue
+			swapkey()
+			self.solve_parity()
+	def solve_parity(self):
+		if not self.solved(self.width, self.height-2) or not self.solved(self.width-1, self.height):
+			raise ValueError(self)
+		while not self.solved():
 			print("Parity issue")
-			self.solve()
+			self.swipe_up(-1, -1)
+			if self.solved():continue
+			self.swipe_left(-1, 1)
+			if self.solved():continue
+			self.swipe_up(-1, 1)
+			if self.solved():continue
+			self.swipe_left(-1, 1)
 	def solve(self):
 		self.solve_box()
 		self.solve_lastcol()
