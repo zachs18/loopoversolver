@@ -1,7 +1,7 @@
 import xdotool
 import time
 
-sleep_length = 0.02
+sleep_length = 0.01
 sleep = lambda: time.sleep(sleep_length)
 
 class Board:
