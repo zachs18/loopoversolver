@@ -34,6 +34,8 @@ def keyup(keystroke, window=None, clearmodifiers=False, delay=None):
 	cmdline += " %s" % keystroke
 	subprocess.Popen(cmdline.split())
 def type(*strings, window=None, clearmodifiers=False, delay=None):
+	if not strings:
+		return
 	cmdline = "xdotool type"
 	if window is not None:
 		cmdline += " --window %s" % window
@@ -41,9 +43,7 @@ def type(*strings, window=None, clearmodifiers=False, delay=None):
 		cmdline += " --clearmodifers"
 	if delay is not None:
 		cmdline += " --delay %s" % delay
-	for string in strings:
-		cmdline += " %s" % string
-	subprocess.Popen(cmdline.split())
+	subprocess.Popen(cmdline.split() + list(strings))
 
 mouse_previous_location = (None, None)
 

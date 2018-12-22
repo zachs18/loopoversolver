@@ -311,32 +311,33 @@ def optimize_solution(_s, width, height):
 	for group in unordered_groups:
 		if re.match('[adjl]', group):
 			# Horizontal movement
-			moves_left = (group.count('j') - group.count('l')) % width
 			swipes_left = (group.count('a') - group.count('d')) % width
-			moves_right = (-moves_left) % width
+			moves_left = (group.count('j') - group.count('l')) % width
 			swipes_right = (-swipes_left) % width
-			if moves_left < moves_right:
-				out += moves_left*'j'
-			else:
-				out += moves_right*'l'
+			moves_right = (-moves_left) % width
 			if swipes_left < swipes_right:
 				out += swipes_left*'a'
 			else:
 				out += swipes_right*'d'
+			if moves_left < moves_right:
+				out += moves_left*'j'
+			else:
+				out += moves_right*'l'
 		else:
 			# Vertical movement
-			moves_up = (group.count('i') - group.count('k')) % height
 			swipes_up = (group.count('w') - group.count('s')) % height
-			moves_down = (-moves_up) % height
+			moves_up = (group.count('i') - group.count('k')) % height
 			swipes_down = (-swipes_up) % height
-			if moves_up < moves_down:
-				out += moves_up*'i'
-			else:
-				out += moves_down*'k'
+			moves_down = (-moves_up) % height
 			if swipes_up < swipes_down:
 				out += swipes_up*'w'
 			else:
 				out += swipes_down*'s'
+			if moves_up < moves_down:
+				out += moves_up*'i'
+			else:
+				out += moves_down*'k'
+	out = out.rstrip("jilk") # Moves at the end dont affect the outcome
 	if _s == out:
 		return out
 	return optimize_solution(out, width, height)
