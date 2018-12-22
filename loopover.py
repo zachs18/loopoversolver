@@ -5,10 +5,11 @@ from collections import Counter
 sleep_length = 0.01
 sleep = lambda: time.sleep(sleep_length)
 
-concurrent = True
+concurrent = False
 
 class Board:
 	def __init__(self, _s):
+		print(sleep_length)
 		s=_s
 		if 'a' in s.lower():
 			s = s.replace('\n', '').replace(' ', '').lower()
@@ -131,8 +132,8 @@ class Board:
 		self.typed += self.keys
 		self.keys = ""
 	def solved(self, width=None, height=None):
-		for x in range(width or self.width):
-			for y in range(height or self.height):
+		for x in range(width if width is not None else self.width):
+			for y in range(height if height is not None else self.height):
 				if (x,y) != self.find(x, y):
 					return False
 		return True
@@ -287,6 +288,50 @@ class Board:
 		self.solve_keyhole()
 		if not self.solved() and not self.width % 2:
 			self.solve_parity()
-		concurrent or xdotool.type(self.keys)
+		concurrent or xdotool.type(optimize_solution(self.keys, self.width, self.height))
+#		concurrent or xdotool.type(self.keys)
 		self.typed += self.keys
 		self.keys = ""
+def optimize_solution(_s, width, height):
+	"""
+	Takes a solution, width, and height and optimizes the solution
+	i.e. "aajasis", 4, 4 -> "jdiss"
+	"""
+	import re
+	s = _s.replace(' ', '')
+	if not re.match("^[wasdijkl]*$", s):
+		raise ValueError(_s)
+	unordered_groups = re.findall("([adjl]+|[wsik]+)", s)
+	out = ""
+	for group in unordered_groups:
+		if re.match('[adjl]', group):
+			# Horizontal movement
+			moves_left = (group.count('j') - group.count('l')) % width
+			swipes_left = (group.count('a') - group.count('d')) % width
+			moves_right = (-moves_left) % width
+			swipes_right = (-swipes_left) % width
+			if moves_left < moves_right:
+				out += moves_left*'j'
+			else:
+				out += moves_right*'l'
+			if swipes_left < swipes_right:
+				out += swipes_left*'a'
+			else:
+				out += swipes_right*'d'
+		else:
+			# Vertical movement
+			moves_up = (group.count('i') - group.count('k')) % height
+			swipes_up = (group.count('w') - group.count('s')) % height
+			moves_down = (-moves_up) % height
+			swipes_down = (-swipes_up) % height
+			if moves_up < moves_down:
+				out += moves_up*'i'
+			else:
+				out += moves_down*'k'
+			if swipes_up < swipes_down:
+				out += swipes_up*'w'
+			else:
+				out += swipes_down*'s'
+	if _s == out:
+		return out
+	return optimize_solution(out, width, height)
