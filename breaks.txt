@@ -1,0 +1,2 @@
+# List of boards which this solver doesn't work on
+# itmyp drfwn uvgbj esklo qxcha # Fixed by f68657e71672de486140f7d1061b6ab49fa23c03

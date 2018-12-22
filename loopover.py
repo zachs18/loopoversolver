@@ -32,6 +32,10 @@ class Board:
 		self.typed = self.keys = ''
 	def __str__(self):
 		return "Board(" + str(self.board) + ")"
+	def __repr__(self):
+		return "Board(\n\t" + '\n\t'.join(
+			'['+', '.join(str(i) for i in row)+']' for row in self.board
+		) + "\n)"
 	def move(self, x=None, y=None):
 		if x is not None:
 			w = self.width
@@ -198,7 +202,8 @@ class Board:
 			#print('1 is at', x, y)
 			self.swipe_up(x, y)
 			self.swipe_left(0, x)
-		xdotool.key("space") # for grouping, doesnt affect game
+		concurrent and xdotool.key("space") # for grouping, doesnt affect game
+		self.keys += ' '
 		sleep()
 	def solve_lastcol(self): # leaves keyhole
 		if not self.solved(self.width-1, self.height-1):
@@ -242,16 +247,16 @@ class Board:
 				lastcol_up = True
 				key = self.board[-2][-1]
 				update_keyloc()
-		x, y = self.find(0, -1)
+		x, y = self.find(0, -1) # leftmost cell in bottom row
 		if y == self.height-1: # not the key
 			self.swipe_left(-1, x) # get leftmost cell aligned
 			key = self.board[-2][-1]
 			update_keyloc()
 		else: # the key
 			self.swipe_up(-1, -1)
-			self.swipe_left(-1, x)
+			self.swipe_left(-1, x) # get leftmost cell aligned
 			lastcol_up = False
-			key = self.board[0][1]
+			key = self.board[0][-1]
 			update_keyloc()
 		for i in range(1, self.width):
 			x, y = self.find(i, -1)
