@@ -10,7 +10,7 @@ Requirements:
 
 * Fallback on Ubuntu (or probably other Linux distros) if pyautogui is not installed: xdotool (`sudo apt install xdotool`)
 
-Note: If neither pyautogui nor xdotool is found, this project will output the keystrokes tha would have been typed to stdout.
+Note: If neither pyautogui nor xdotool is found, this project will output the keystrokes that would have been typed to stderr.
 
 ## Usage:
 
