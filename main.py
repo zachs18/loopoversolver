@@ -3,11 +3,6 @@ import loopover
 import time
 import sys
 
-try:
-	loopover.sleep_length = float(sys.argv[1])
-except (ValueError, IndexError) as e:
-	pass
-
 line_count = input("Multiline input? (line count for yes, empty or non-int for no): ")
 try:
 	s = ""

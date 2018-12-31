@@ -10,6 +10,8 @@ Requirements:
 
 * Fallback on Ubuntu (or probably other Linux distros) if pyautogui is not installed: xdotool (`sudo apt install xdotool`)
 
+Note: If neither pyautogui nor xdotool is found, this project will output the keystrokes tha would have been typed to stdout.
+
 ## Usage:
 
 1. Open Loopover in a web browser, scramble, and *use the arrow keys to select the top-left cell*.
