@@ -4,7 +4,11 @@ Solver for https://www.openprocessing.org/sketch/580366
 
 Requirements:
 
-Python3 and xdotool on Ubuntu (or probably other Linux distros).
+* Python3
+
+* pyautogui (`pip install pyautogui` or `pip3 install pyautogui`)
+
+* Fallback on Ubuntu (or probably other Linux distros) if pyautogui is not installed: xdotool (`sudo apt install xdotool`)
 
 ## Usage:
 
