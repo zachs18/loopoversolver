@@ -7,8 +7,6 @@ except ModuleNotFoundError:
 	import subprocess
 	import time
 
-	#sleep_time = 0.06
-
 	def key(keystroke, window=None, clearmodifiers=False, delay=None):
 		cmdline = "xdotool key"
 		if window is not None:
